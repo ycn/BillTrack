@@ -1,10 +1,10 @@
 class Person {
 	String name
 	
-	static hasMany = [bills:Bill, accounts:Account]
+	static hasMany = [paidBills:Bill, accounts:Account]
 	
     static constraints = {
-		name(minLength:3, maxLength:30, unique:true, blank:false)
+		name(size:3..30, unique:true, nullable:false, blank:false)
     }
 	
 	String toString() {"${this.name}"}

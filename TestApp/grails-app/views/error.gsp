@@ -1,6 +1,7 @@
 <html>
   <head>
 	  <title>Grails Runtime Exception</title>
+	  <meta name="layout" content="billtrack" />
 	  <style type="text/css">
 	  		.message {
 	  			border: 1px solid black;
@@ -12,6 +13,7 @@
 	  			padding: 5px;
 	  			overflow:auto;
 	  			height: 300px;
+	  			width:540px;
 	  		}
 	  		.snippet {
 	  			padding: 5px;

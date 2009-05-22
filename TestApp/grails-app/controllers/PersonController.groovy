@@ -27,11 +27,11 @@ class PersonController {
         if(personInstance) {
             try {
                 personInstance.delete()
-                flash.message = "Person ${params.id} deleted"
+                flash.message = "Person ${params.toString()} deleted"
                 redirect(action:list)
             }
             catch(org.springframework.dao.DataIntegrityViolationException e) {
-                flash.message = "Person ${params.id} could not be deleted"
+                flash.message = "Person ${params.toString()} could not be deleted"
                 redirect(action:show,id:params.id)
             }
         }
@@ -67,7 +67,7 @@ class PersonController {
             }
             personInstance.properties = params
             if(!personInstance.hasErrors() && personInstance.save()) {
-                flash.message = "Person ${params.id} updated"
+                flash.message = "Person ${params.toString()} updated"
                 redirect(action:show,id:personInstance.id)
             }
             else {
@@ -89,7 +89,7 @@ class PersonController {
     def save = {
         def personInstance = new Person(params)
         if(!personInstance.hasErrors() && personInstance.save()) {
-            flash.message = "Person ${personInstance.id} created"
+            flash.message = "Person ${personInstance.toString()} created"
             redirect(action:show,id:personInstance.id)
         }
         else {

@@ -1,30 +1,25 @@
 class Bill {
 	// Fields
 	String	address
-	String	comment
 	Person	payer
 	Float	cost
-	
-	// default values
+	String	comment
 	Date	createdDate = new Date()
 	Boolean	checkOut = false
-	Date	checkOutDate = new Date()
-	
-	// Optional - Can be null
-	def optionals = ["comment"]
+	Date	checkOutDate
 	
 	// One bill has many Accounts
 	static hasMany = [accounts:Account]
 
     static constraints = {
-		address(minLength:8, maxLength:200)
-		cost(min:0.0f, max:999.99f, blank:false)
+		address(size:4..200, nullable:false, blank:false)
 		payer(nullable:false)
-		comment(maxLength:1000)
-		createdDate(validator:{return (it > new Date())})
-		checkOut(inList:[false, true], blank:false)
-		checkOutDate(validator:{return (it > new Date())})
+		cost(min:0.00f, max:999.99f, nullable:false, blank:false)
+		comment(maxSize:1000, nullable:true)
+		createdDate(nullable:false)
+		checkOut(inList:[false, true], nullable:false, blank:false)
+		checkOutDate(nullable:true)
     }
 	
-	String toString() {"Bill:${this.address}/${this.payer}[${this.createdDate}]"}
+	String toString() {"B:${this.address}/${this.cost}"}
 }

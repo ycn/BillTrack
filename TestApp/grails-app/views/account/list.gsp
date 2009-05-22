@@ -3,14 +3,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <meta name="layout" content="main" />
+        <meta name="layout" content="billtrack" />
         <title>Account List</title>
     </head>
     <body>
-        <div class="nav">
-            <span class="menuButton"><a class="home" href="${createLinkTo(dir:'')}">Home</a></span>
-            <span class="menuButton"><g:link class="create" action="create">New Account</g:link></span>
-        </div>
         <div class="body">
             <h1>Account List</h1>
             <g:if test="${flash.message}">
@@ -29,6 +25,8 @@
                    	    
                    	        <g:sortableColumn property="cost" title="Cost" />
                         
+                   	        <g:sortableColumn property="confirmed" title="Confirmed" />
+                        
                         </tr>
                     </thead>
                     <tbody>
@@ -42,6 +40,8 @@
                             <td>${fieldValue(bean:accountInstance, field:'consumer')}</td>
                         
                             <td>${fieldValue(bean:accountInstance, field:'cost')}</td>
+                        
+                            <td>${fieldValue(bean:accountInstance, field:'confirmed')}</td>
                         
                         </tr>
                     </g:each>

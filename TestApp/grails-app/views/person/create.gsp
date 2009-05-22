@@ -3,14 +3,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <meta name="layout" content="main" />
+        <meta name="layout" content="billtrack" />
         <title>Create Person</title>         
     </head>
     <body>
-        <div class="nav">
-            <span class="menuButton"><a class="home" href="${createLinkTo(dir:'')}">Home</a></span>
-            <span class="menuButton"><g:link class="list" action="list">Person List</g:link></span>
-        </div>
         <div class="body">
             <h1>Create Person</h1>
             <g:if test="${flash.message}">
@@ -31,7 +27,7 @@
                                     <label for="name">Name:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:personInstance,field:'name','errors')}">
-                                    <input type="text" id="name" name="name" value="${fieldValue(bean:personInstance,field:'name')}"/>
+                                    <input type="text" maxlength="30" id="name" name="name" value="${fieldValue(bean:personInstance,field:'name')}"/>
                                 </td>
                             </tr> 
                         

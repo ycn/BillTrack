@@ -27,11 +27,11 @@ class BillController {
         if(billInstance) {
             try {
                 billInstance.delete()
-                flash.message = "Bill ${params.id} deleted"
+                flash.message = "Bill ${params.toString()} deleted"
                 redirect(action:list)
             }
             catch(org.springframework.dao.DataIntegrityViolationException e) {
-                flash.message = "Bill ${params.id} could not be deleted"
+                flash.message = "Bill ${params.toString()} could not be deleted"
                 redirect(action:show,id:params.id)
             }
         }
@@ -67,7 +67,7 @@ class BillController {
             }
             billInstance.properties = params
             if(!billInstance.hasErrors() && billInstance.save()) {
-                flash.message = "Bill ${params.id} updated"
+                flash.message = "Bill ${params.toString()} updated"
                 redirect(action:show,id:billInstance.id)
             }
             else {
@@ -89,7 +89,7 @@ class BillController {
     def save = {
         def billInstance = new Bill(params)
         if(!billInstance.hasErrors() && billInstance.save()) {
-            flash.message = "Bill ${billInstance.id} created"
+            flash.message = "Bill ${billInstance.toString()} created"
             redirect(action:show,id:billInstance.id)
         }
         else {

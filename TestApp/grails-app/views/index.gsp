@@ -1,20 +1,12 @@
 <html>
     <head>
-        <title>Welcome to Grails</title>
-		<meta name="layout" content="main" />
+        <title>Bill Track</title>
+		<meta name="layout" content="billtrack" />
     </head>
     <body>
-        <h1 style="margin-left:20px;">Welcome to Grails</h1>
-        <p style="margin-left:20px;width:80%">Congratulations, you have successfully started your first Grails application! At the moment
-        this is the default page, feel free to modify it to either redirect to a controller or display whatever
-        content you may choose. Below is a list of controllers that are currently deployed in this application,
-        click on each to execute its default action:</p>
-        <div class="dialog" style="margin-left:20px;width:60%;">
-            <ul>
-              <g:each var="c" in="${grailsApplication.controllerClasses}">
-                    <li class="controller"><g:link controller="${c.logicalPropertyName}">${c.fullName}</g:link></li>
-              </g:each>
-            </ul>
-        </div>
+        <h1>Welcome to Bill Track</h1>
+        <div class="welcome-title">Hello yay ! Today is 2009/5/22.</div>
+		<div class="action-button"><g:link controller="bill" action="create">Create Today's Bill</g:link></div>
+		<div class="action-button"><g:link controller="checkout">Check Out</g:link></div>
     </body>
 </html>

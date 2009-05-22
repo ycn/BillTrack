@@ -3,14 +3,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <meta name="layout" content="main" />
+        <meta name="layout" content="billtrack" />
         <title>Create Account</title>         
     </head>
     <body>
-        <div class="nav">
-            <span class="menuButton"><a class="home" href="${createLinkTo(dir:'')}">Home</a></span>
-            <span class="menuButton"><g:link class="list" action="list">Account List</g:link></span>
-        </div>
         <div class="body">
             <h1>Create Account</h1>
             <g:if test="${flash.message}">
@@ -50,6 +46,33 @@
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:accountInstance,field:'cost','errors')}">
                                     <input type="text" id="cost" name="cost" value="${fieldValue(bean:accountInstance,field:'cost')}" />
+                                </td>
+                            </tr> 
+                        
+                            <tr class="prop">
+                                <td valign="top" class="name">
+                                    <label for="comment">Comment:</label>
+                                </td>
+                                <td valign="top" class="value ${hasErrors(bean:accountInstance,field:'comment','errors')}">
+                                    <textarea rows="5" cols="40" name="comment">${fieldValue(bean:accountInstance, field:'comment')}</textarea>
+                                </td>
+                            </tr> 
+                        
+                            <tr class="prop">
+                                <td valign="top" class="name">
+                                    <label for="confirmed">Confirmed:</label>
+                                </td>
+                                <td valign="top" class="value ${hasErrors(bean:accountInstance,field:'confirmed','errors')}">
+                                    <g:checkBox name="confirmed" value="${accountInstance?.confirmed}" ></g:checkBox>
+                                </td>
+                            </tr> 
+                        
+                            <tr class="prop">
+                                <td valign="top" class="name">
+                                    <label for="confirmedDate">Confirmed Date:</label>
+                                </td>
+                                <td valign="top" class="value ${hasErrors(bean:accountInstance,field:'confirmedDate','errors')}">
+                                	<g:formatDate format="yyyy-MM-dd" date="${accountInstance?.confirmedDate}" />
                                 </td>
                             </tr> 
                         

@@ -3,14 +3,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <meta name="layout" content="main" />
+        <meta name="layout" content="billtrack" />
         <title>Create Bill</title>         
     </head>
     <body>
-        <div class="nav">
-            <span class="menuButton"><a class="home" href="${createLinkTo(dir:'')}">Home</a></span>
-            <span class="menuButton"><g:link class="list" action="list">Bill List</g:link></span>
-        </div>
         <div class="body">
             <h1>Create Bill</h1>
             <g:if test="${flash.message}">
@@ -31,16 +27,7 @@
                                     <label for="address">Address:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:billInstance,field:'address','errors')}">
-                                    <input type="text" id="address" name="address" value="${fieldValue(bean:billInstance,field:'address')}"/>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="cost">Cost:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:billInstance,field:'cost','errors')}">
-                                    <input type="text" id="cost" name="cost" value="${fieldValue(bean:billInstance,field:'cost')}" />
+                                    <input type="text" maxlength="200" id="address" name="address" value="${fieldValue(bean:billInstance,field:'address')}"/>
                                 </td>
                             </tr> 
                         
@@ -55,10 +42,19 @@
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
+                                    <label for="cost">Cost:</label>
+                                </td>
+                                <td valign="top" class="value ${hasErrors(bean:billInstance,field:'cost','errors')}">
+                                    <input type="text" id="cost" name="cost" value="${fieldValue(bean:billInstance,field:'cost')}" />
+                                </td>
+                            </tr> 
+                        
+                            <tr class="prop">
+                                <td valign="top" class="name">
                                     <label for="comment">Comment:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:billInstance,field:'comment','errors')}">
-                                    <input type="text" id="comment" name="comment" value="${fieldValue(bean:billInstance,field:'comment')}"/>
+                                    <textarea rows="5" cols="40" name="comment">${fieldValue(bean:billInstance, field:'comment')}</textarea>
                                 </td>
                             </tr> 
                         
@@ -67,7 +63,7 @@
                                     <label for="createdDate">Created Date:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:billInstance,field:'createdDate','errors')}">
-                                    <g:datePicker name="createdDate" value="${billInstance?.createdDate}" ></g:datePicker>
+                                    <g:formatDate format="yyyy-MM-dd" date="${billInstance?.createdDate}" />
                                 </td>
                             </tr> 
                         
@@ -85,16 +81,7 @@
                                     <label for="checkOutDate">Check Out Date:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:billInstance,field:'checkOutDate','errors')}">
-                                    <g:datePicker name="checkOutDate" value="${billInstance?.checkOutDate}" ></g:datePicker>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="optionals">Optionals:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:billInstance,field:'optionals','errors')}">
-                                    
+                                	<g:formatDate format="yyyy-MM-dd" date="${billInstance?.checkOutDate}" />
                                 </td>
                             </tr> 
                         

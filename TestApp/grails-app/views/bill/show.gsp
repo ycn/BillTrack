@@ -3,15 +3,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <meta name="layout" content="main" />
+        <meta name="layout" content="billtrack" />
         <title>Show Bill</title>
     </head>
     <body>
-        <div class="nav">
-            <span class="menuButton"><a class="home" href="${createLinkTo(dir:'')}">Home</a></span>
-            <span class="menuButton"><g:link class="list" action="list">Bill List</g:link></span>
-            <span class="menuButton"><g:link class="create" action="create">New Bill</g:link></span>
-        </div>
         <div class="body">
             <h1>Show Bill</h1>
             <g:if test="${flash.message}">
@@ -20,14 +15,6 @@
             <div class="dialog">
                 <table>
                     <tbody>
-
-                    
-                        <tr class="prop">
-                            <td valign="top" class="name">Id:</td>
-                            
-                            <td valign="top" class="value">${fieldValue(bean:billInstance, field:'id')}</td>
-                            
-                        </tr>
                     
                         <tr class="prop">
                             <td valign="top" class="name">Address:</td>
@@ -37,16 +24,16 @@
                         </tr>
                     
                         <tr class="prop">
-                            <td valign="top" class="name">Cost:</td>
+                            <td valign="top" class="name">Payer:</td>
                             
-                            <td valign="top" class="value">${fieldValue(bean:billInstance, field:'cost')}</td>
+                            <td valign="top" class="value"><g:link controller="person" action="show" id="${billInstance?.payer?.id}">${billInstance?.payer?.encodeAsHTML()}</g:link></td>
                             
                         </tr>
                     
                         <tr class="prop">
-                            <td valign="top" class="name">Payer:</td>
+                            <td valign="top" class="name">Cost:</td>
                             
-                            <td valign="top" class="value"><g:link controller="person" action="show" id="${billInstance?.payer?.id}">${billInstance?.payer?.encodeAsHTML()}</g:link></td>
+                            <td valign="top" class="value">${fieldValue(bean:billInstance, field:'cost')}</td>
                             
                         </tr>
                     
@@ -60,7 +47,7 @@
                         <tr class="prop">
                             <td valign="top" class="name">Created Date:</td>
                             
-                            <td valign="top" class="value">${fieldValue(bean:billInstance, field:'createdDate')}</td>
+                            <td valign="top" class="value"><g:formatDate format="yyyy-MM-dd" date="${billInstance?.createdDate}" /></td>
                             
                         </tr>
                     
@@ -74,7 +61,7 @@
                         <tr class="prop">
                             <td valign="top" class="name">Check Out Date:</td>
                             
-                            <td valign="top" class="value">${fieldValue(bean:billInstance, field:'checkOutDate')}</td>
+                            <td valign="top" class="value"><g:formatDate format="yyyy-MM-dd" date="${billInstance?.checkOutDate}" /></td>
                             
                         </tr>
                     
@@ -88,13 +75,6 @@
                                 </g:each>
                                 </ul>
                             </td>
-                            
-                        </tr>
-                    
-                        <tr class="prop">
-                            <td valign="top" class="name">Optionals:</td>
-                            
-                            <td valign="top" class="value">${fieldValue(bean:billInstance, field:'optionals')}</td>
                             
                         </tr>
                     

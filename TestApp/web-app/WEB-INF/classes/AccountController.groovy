@@ -27,11 +27,11 @@ class AccountController {
         if(accountInstance) {
             try {
                 accountInstance.delete()
-                flash.message = "Account ${params.id} deleted"
+                flash.message = "Account ${params.toString()} deleted"
                 redirect(action:list)
             }
             catch(org.springframework.dao.DataIntegrityViolationException e) {
-                flash.message = "Account ${params.id} could not be deleted"
+                flash.message = "Account ${params.toString()} could not be deleted"
                 redirect(action:show,id:params.id)
             }
         }
@@ -67,7 +67,7 @@ class AccountController {
             }
             accountInstance.properties = params
             if(!accountInstance.hasErrors() && accountInstance.save()) {
-                flash.message = "Account ${params.id} updated"
+                flash.message = "Account ${params.toString()} updated"
                 redirect(action:show,id:accountInstance.id)
             }
             else {
@@ -89,7 +89,7 @@ class AccountController {
     def save = {
         def accountInstance = new Account(params)
         if(!accountInstance.hasErrors() && accountInstance.save()) {
-            flash.message = "Account ${accountInstance.id} created"
+            flash.message = "Account ${accountInstance.toString()} created"
             redirect(action:show,id:accountInstance.id)
         }
         else {
