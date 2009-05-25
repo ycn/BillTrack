@@ -18,6 +18,6 @@ class Account {
     }
 	
 	String toString() {
-		"A:${this.consumer}/${this.cost}[${this.bill.createdDate}]"
+		"A#${this.consumer}/${this.cost}"
 	}
 }

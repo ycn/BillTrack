@@ -40,7 +40,15 @@
 			<ul class="round">
 				<li><a href="${createLinkTo(dir:'')}">Home</a></li>
 				<li><a>Graph</a></li>
-				<li class="last"><a>Sign out</a></li>
+				<g:if test="${!session.UserID}">
+					<li class="last"><g:link controller="person" action="login">Log in</g:link></li>
+				</g:if>
+				<g:else>
+					<li><g:link controller="person" action="edit">Settings</g:link></li>
+					<li><g:link controller="account" action="list">Accounts</g:link></li>
+					<li><g:link controller="bill" action="list">Paid Bills</g:link></li>
+					<li class="last"><g:link controller="person" action="logout">Log out</g:link></li>
+				</g:else>
 			</ul>
 		</div>
 	</div>

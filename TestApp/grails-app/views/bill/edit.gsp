@@ -71,24 +71,6 @@
                         
                             <tr class="prop">
                                 <td valign="top" class="name">
-                                    <label for="checkOut">Check Out:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:billInstance,field:'checkOut','errors')}">
-                                    <g:checkBox name="checkOut" value="${billInstance?.checkOut}" ></g:checkBox>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="checkOutDate">Check Out Date:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:billInstance,field:'checkOutDate','errors')}">
-                                    When you checked checkOut.
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
                                     <label for="accounts">Accounts:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:billInstance,field:'accounts','errors')}">

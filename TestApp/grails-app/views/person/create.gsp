@@ -30,6 +30,15 @@
                                     <input type="text" maxlength="30" id="name" name="name" value="${fieldValue(bean:personInstance,field:'name')}"/>
                                 </td>
                             </tr> 
+                            
+                            <tr class="prop">
+                                <td valign="top" class="name">
+                                    <label for="name">Password:</label>
+                                </td>
+                                <td valign="top" class="value ${hasErrors(bean:personInstance,field:'password','errors')}">
+                                    <input type="password" maxlength="20" id="password" name="password" value="${fieldValue(bean:personInstance,field:'password')}"/>
+                                </td>
+                            </tr> 
                         
                         </tbody>
                     </table>

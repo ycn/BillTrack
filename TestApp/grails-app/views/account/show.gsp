@@ -16,14 +16,6 @@
                 <table>
                     <tbody>
 
-                    
-                        <tr class="prop">
-                            <td valign="top" class="name">Id:</td>
-                            
-                            <td valign="top" class="value">${fieldValue(bean:accountInstance, field:'id')}</td>
-                            
-                        </tr>
-                    
                         <tr class="prop">
                             <td valign="top" class="name">Bill:</td>
                             
@@ -34,7 +26,7 @@
                         <tr class="prop">
                             <td valign="top" class="name">Consumer:</td>
                             
-                            <td valign="top" class="value"><g:link controller="person" action="show" id="${accountInstance?.consumer?.id}">${accountInstance?.consumer?.encodeAsHTML()}</g:link></td>
+                            <td valign="top" class="value">${accountInstance?.consumer?.encodeAsHTML()}</td>
                             
                         </tr>
                     

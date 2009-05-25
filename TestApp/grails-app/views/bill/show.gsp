@@ -26,7 +26,7 @@
                         <tr class="prop">
                             <td valign="top" class="name">Payer:</td>
                             
-                            <td valign="top" class="value"><g:link controller="person" action="show" id="${billInstance?.payer?.id}">${billInstance?.payer?.encodeAsHTML()}</g:link></td>
+                            <td valign="top" class="value">${billInstance?.payer?.encodeAsHTML()}</td>
                             
                         </tr>
                     

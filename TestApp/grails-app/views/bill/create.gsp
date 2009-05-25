@@ -22,6 +22,8 @@
                     <table>
                         <tbody>
                         
+                        	<g:hiddenField name="payer.id" value="${session.UserID}" ></g:hiddenField>
+                        
                             <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="address">Address:</label>
@@ -36,7 +38,7 @@
                                     <label for="payer">Payer:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:billInstance,field:'payer','errors')}">
-                                    <g:select optionKey="id" from="${Person.list()}" name="payer.id" value="${billInstance?.payer?.id}" ></g:select>
+                                	${Person.get(session.UserID).encodeAsHTML()}
                                 </td>
                             </tr> 
                         
@@ -66,25 +68,7 @@
                                     <g:formatDate format="yyyy-MM-dd" date="${billInstance?.createdDate}" />
                                 </td>
                             </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="checkOut">Check Out:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:billInstance,field:'checkOut','errors')}">
-                                    <g:checkBox name="checkOut" value="${billInstance?.checkOut}" ></g:checkBox>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="checkOutDate">Check Out Date:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:billInstance,field:'checkOutDate','errors')}">
-                                	<g:formatDate format="yyyy-MM-dd" date="${billInstance?.checkOutDate}" />
-                                </td>
-                            </tr> 
-                        
+                            
                         </tbody>
                     </table>
                 </div>

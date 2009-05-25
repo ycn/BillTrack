@@ -21,5 +21,5 @@ class Bill {
 		checkOutDate(nullable:true)
     }
 	
-	String toString() {"B:${this.address}/${this.cost}"}
+	String toString() {"B#${this.address}/${this.cost}"}
 }

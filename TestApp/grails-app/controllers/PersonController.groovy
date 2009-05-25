@@ -1,52 +1,18 @@
 
 
-class PersonController {
+class PersonController extends BaseController {
+	
+	def beforeInterceptor = [action:this.&auth, except:['login']]
     
-    def index = { redirect(action:list,params:params) }
+    def index = { redirect(action:login,params:params) }
 
     // the delete, save and update actions only accept POST requests
-    static allowedMethods = [delete:'POST', save:'POST', update:'POST']
-
-    def list = {
-        params.max = Math.min( params.max ? params.max.toInteger() : 10,  100)
-        [ personInstanceList: Person.list( params ), personInstanceTotal: Person.count() ]
-    }
-
-    def show = {
-        def personInstance = Person.get( params.id )
-
-        if(!personInstance) {
-            flash.message = "Person not found with id ${params.id}"
-            redirect(action:list)
-        }
-        else { return [ personInstance : personInstance ] }
-    }
-
-    def delete = {
-        def personInstance = Person.get( params.id )
-        if(personInstance) {
-            try {
-                personInstance.delete()
-                flash.message = "Person ${params.toString()} deleted"
-                redirect(action:list)
-            }
-            catch(org.springframework.dao.DataIntegrityViolationException e) {
-                flash.message = "Person ${params.toString()} could not be deleted"
-                redirect(action:show,id:params.id)
-            }
-        }
-        else {
-            flash.message = "Person not found with id ${params.id}"
-            redirect(action:list)
-        }
-    }
-
+    static allowedMethods = [save:'POST', update:'POST']
+	
     def edit = {
-        def personInstance = Person.get( params.id )
-
+		def personInstance = Person.get( session.UserID )
         if(!personInstance) {
-            flash.message = "Person not found with id ${params.id}"
-            redirect(action:list)
+        	this.askAuth()
         }
         else {
             return [ personInstance : personInstance ]
@@ -54,9 +20,9 @@ class PersonController {
     }
 
     def update = {
-        def personInstance = Person.get( params.id )
+        def personInstance = Person.get( session.UserID )
         if(personInstance) {
-            if(params.version) {
+        	if(params.version) {
                 def version = params.version.toLong()
                 if(personInstance.version > version) {
                     
@@ -67,33 +33,47 @@ class PersonController {
             }
             personInstance.properties = params
             if(!personInstance.hasErrors() && personInstance.save()) {
-                flash.message = "Person ${params.toString()} updated"
-                redirect(action:show,id:personInstance.id)
+                flash.message = "Person ${personInstance.toString()} updated"
+                redirect(uri:'/')
             }
             else {
                 render(view:'edit',model:[personInstance:personInstance])
             }
         }
         else {
-            flash.message = "Person not found with id ${params.id}"
-            redirect(action:edit,id:params.id)
+        	this.askAuth()
         }
+		
     }
 
-    def create = {
-        def personInstance = new Person()
-        personInstance.properties = params
-        return ['personInstance':personInstance]
+    def login = {
+    	if (request.method == "POST") {
+    		def person = Person.findByNameAndPassword(params.name, params.password)
+    		if (person) {
+    			session.UserID = person.id
+    			session.UserName = person.name
+    			def redirectParams =
+    				   session.originalRequestParams ?
+    				   session.originalRequestParams :
+    				   [uri:'/']
+    			redirect(redirectParams)
+    		}
+    		else {
+    			flash.message = "Please enter a valid User Name and Password"
+    		}
+    	}
+    	else {
+    		if (this.isAuth()) {
+    			flash.message = "Allready logged in"
+    			redirect(uri:'/')
+    		}
+    	}
     }
-
-    def save = {
-        def personInstance = new Person(params)
-        if(!personInstance.hasErrors() && personInstance.save()) {
-            flash.message = "Person ${personInstance.toString()} created"
-            redirect(action:show,id:personInstance.id)
-        }
-        else {
-            render(view:'create',model:[personInstance:personInstance])
-        }
+    
+    def logout = {
+		session.UserID = null
+    	session.UserName = null
+    	flash.message = "Successfully log out"
+    	redirect(uri:'/')
     }
 }

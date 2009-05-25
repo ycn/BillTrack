@@ -22,15 +22,8 @@
                     <table>
                         <tbody>
                         
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="bill">Bill:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:accountInstance,field:'bill','errors')}">
-                                    <g:select optionKey="id" from="${Bill.list()}" name="bill.id" value="${accountInstance?.bill?.id}" ></g:select>
-                                </td>
-                            </tr> 
-                        
+                        	<g:hiddenField name="bill.id" value="${accountInstance?.bill?.id}" />
+                        	
                             <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="consumer">Consumer:</label>
@@ -39,7 +32,7 @@
                                     <g:select optionKey="id" from="${Person.list()}" name="consumer.id" value="${accountInstance?.consumer?.id}" ></g:select>
                                 </td>
                             </tr> 
-                        
+                        	
                             <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="cost">Cost:</label>
@@ -55,24 +48,6 @@
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:accountInstance,field:'comment','errors')}">
                                     <textarea rows="5" cols="40" name="comment">${fieldValue(bean:accountInstance, field:'comment')}</textarea>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="confirmed">Confirmed:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:accountInstance,field:'confirmed','errors')}">
-                                    <g:checkBox name="confirmed" value="${accountInstance?.confirmed}" ></g:checkBox>
-                                </td>
-                            </tr> 
-                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="confirmedDate">Confirmed Date:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:accountInstance,field:'confirmedDate','errors')}">
-                                	<g:formatDate format="yyyy-MM-dd" date="${accountInstance?.confirmedDate}" />
                                 </td>
                             </tr> 
                         

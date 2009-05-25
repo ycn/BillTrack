@@ -17,35 +17,31 @@
                     <thead>
                         <tr>
                         
-                   	        <g:sortableColumn property="id" title="Id" />
+                   	        <g:sortableColumn property="createdDate" title="Date" defaultOrder="desc" />
                         
                    	        <g:sortableColumn property="address" title="Address" />
                         
-                   	        <th>Payer</th>
-                   	    
                    	        <g:sortableColumn property="cost" title="Cost" />
                         
-                   	        <g:sortableColumn property="createdDate" title="Created Date" />
-                   	        
                    	        <g:sortableColumn property="checkOut" title="CheckOut" />
                         
+                        	<th>Show</th>
+                        	
                         </tr>
                     </thead>
                     <tbody>
                     <g:each in="${billInstanceList}" status="i" var="billInstance">
                         <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
                         
-                            <td><g:link action="show" id="${billInstance.id}">${fieldValue(bean:billInstance, field:'id')}</g:link></td>
+                            <td><g:formatDate format="yyyy-MM-dd" date="${billInstance.createdDate}" /></td>
                         
                             <td>${fieldValue(bean:billInstance, field:'address')}</td>
                         
-                            <td>${fieldValue(bean:billInstance, field:'payer')}</td>
-                        
                             <td>${fieldValue(bean:billInstance, field:'cost')}</td>
                         
-                            <td>${fieldValue(bean:billInstance, field:'createdDate')}</td>
-                        
                         	<td>${fieldValue(bean:billInstance, field:'checkOut')}</td>
+                        	
+                        	<td><g:link action="show" id="${billInstance.id}">show</g:link></td>
                         	
                         </tr>
                     </g:each>
