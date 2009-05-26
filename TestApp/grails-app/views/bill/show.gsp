@@ -54,7 +54,7 @@
                         <tr class="prop">
                             <td valign="top" class="name">Check Out:</td>
                             
-                            <td valign="top" class="value">${fieldValue(bean:billInstance, field:'checkOut')}</td>
+                            <td valign="top" class="value ${ifTrue(!billInstance.checkOut, 'highlight')}">${fieldValue(bean:billInstance, field:'checkOut')}</td>
                             
                         </tr>
                     
@@ -71,7 +71,8 @@
                             <td  valign="top" style="text-align:left;" class="value">
                                 <ul>
                                 <g:each var="a" in="${billInstance.accounts}">
-                                    <li><g:link controller="account" action="show" id="${a.id}">${a?.encodeAsHTML()}</g:link></li>
+                                    <li><g:link controller="account" action="show" id="${a.id}">${a?.encodeAsHTML()}</g:link>
+                                    &nbsp;&nbsp;${ifTrue(!a.confirmed, '<span class=\"highlight\">Not confirmed</span>')}</li>
                                 </g:each>
                                 </ul>
                             </td>

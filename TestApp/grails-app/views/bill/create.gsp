@@ -38,7 +38,7 @@
                                     <label for="payer">Payer:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:billInstance,field:'payer','errors')}">
-                                	${Person.get(session.UserID).encodeAsHTML()}
+                                	${user.encodeAsHTML()}
                                 </td>
                             </tr> 
                         

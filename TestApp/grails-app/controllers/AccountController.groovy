@@ -13,7 +13,7 @@ class AccountController extends BaseController {
 		params.max = Math.min( params.max ? params.max.toInteger() : 10,  100)
 		def user = Person.get( session.UserID )
 		if (user) {
-			[ accountInstanceList: user.accounts, accountInstanceTotal: user.accounts.size() ]
+			[ accountInstanceList: user.accounts, accountInstanceTotal: user.accounts.size(), ifTrue:this.&ifTrue  ]
 		}
 		else {
 			this.askAuth()
@@ -28,7 +28,7 @@ class AccountController extends BaseController {
             redirect(action:list)
         }
         else {
-        	return [ accountInstance : accountInstance ]
+        	return [ accountInstance : accountInstance, ifTrue:this.&ifTrue ]
         }
     }
 
@@ -39,6 +39,7 @@ class AccountController extends BaseController {
 	            try {
 	                accountInstance.delete()
 	                flash.message = "Account ${accountInstance.toString()} deleted"
+	                this.caculate()
 	                redirect(action:list)
 	            }
 	            catch(org.springframework.dao.DataIntegrityViolationException e) {
@@ -87,6 +88,10 @@ class AccountController extends BaseController {
 	                }
 	            }
 	            accountInstance.properties = params
+	            if (accountInstance.confirmed) {
+	            	accountInstance.confirmedDate = new Date()
+	            	this.caculate()
+	            }
 	            if(!accountInstance.hasErrors() && accountInstance.save()) {
 	                flash.message = "Account ${accountInstance.toString()} updated"
 	                redirect(action:show,id:accountInstance.id)
@@ -108,13 +113,15 @@ class AccountController extends BaseController {
     def create = {
         def accountInstance = new Account()
         accountInstance.properties = params
-        return ['accountInstance':accountInstance]
+        def personList = Person.list()
+        return ['accountInstance':accountInstance, personList:personList]
     }
 
     def save = {
         def accountInstance = new Account(params)
         if(!accountInstance.hasErrors() && accountInstance.save()) {
             flash.message = "Account ${accountInstance.toString()} created"
+            this.caculate()
             if (session.billID) {
             	redirect(controller:'bill',action:'edit',id:session.billID)
             }

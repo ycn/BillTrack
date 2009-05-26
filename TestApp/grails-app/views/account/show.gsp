@@ -47,7 +47,7 @@
                         <tr class="prop">
                             <td valign="top" class="name">Confirmed:</td>
                             
-                            <td valign="top" class="value">${fieldValue(bean:accountInstance, field:'confirmed')}</td>
+                            <td valign="top" class="value ${ifTrue(!accountInstance.confirmed,'highlight')}">${fieldValue(bean:accountInstance, field:'confirmed')}</td>
                             
                         </tr>
                     

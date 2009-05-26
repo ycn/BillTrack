@@ -1,8 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<html>
 <head>
 	<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-	<meta content="en-us" http-equiv="Content-Language" />
 	<meta content="Bill Track" name="description" />
 	<title><g:layoutTitle default="Bill Track" /></title>
 	<link rel="stylesheet" href="${createLinkTo(dir:'css',file:'billtrack.css')}" />
@@ -23,6 +22,13 @@
 				<g:layoutBody />
 			</td>
 			<td id="sidebar" class="column round-right">
+				<g:if test="${session.UserID}">
+					<div class="welcome-title">From <g:formatDate format="yyyy-MM-dd" date="${session.toCheckOutDate}" /> till now</div>
+					<div class="welcome-title">Total Paid : ${session.totalPaid}</div>
+					<div class="welcome-title">Total Consumed : ${session.totalConsumed}</div>
+					<div class="action-button"><g:link controller="bill" action="create">Create Today's Bill</g:link></div>
+					<div class="action-button"><g:link controller="bill" action="checkout">Check Out</g:link></div>
+				</g:if>
 			</td>
 		</tr>
 		</tbody>
@@ -38,7 +44,7 @@
 		</div>
 		<div id="navigation">
 			<ul class="round">
-				<li><a href="${createLinkTo(dir:'')}">Home</a></li>
+				<li><g:link controller="person" action="home">Home</g:link></li>
 				<li><a>Graph</a></li>
 				<g:if test="${!session.UserID}">
 					<li class="last"><g:link controller="person" action="login">Log in</g:link></li>

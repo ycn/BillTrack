@@ -13,7 +13,7 @@ class BillController extends BaseController {
         params.max = Math.min( params.max ? params.max.toInteger() : 10,  100)
         def user = Person.get( session.UserID )
         if (user) {
-        	[ billInstanceList: user.paidBills , billInstanceTotal: user.paidBills.size() ]
+        	[ billInstanceList: user.paidBills, billInstanceTotal: user.paidBills.size(), ifTrue:this.&ifTrue  ]
         }
         else {
         	this.askAuth()
@@ -27,7 +27,7 @@ class BillController extends BaseController {
             flash.message = "Bill not found"
             redirect(action:list)
         }
-        else { return [ billInstance : billInstance ] }
+        else { return [ billInstance : billInstance, ifTrue:this.&ifTrue  ] }
     }
 
     def delete = {
@@ -37,6 +37,7 @@ class BillController extends BaseController {
 	            try {
 	                billInstance.delete()
 	                flash.message = "Bill ${billInstance.toString()} deleted"
+	                this.caculate()
 	                redirect(action:list)
 	            }
 	            catch(org.springframework.dao.DataIntegrityViolationException e) {
@@ -87,6 +88,7 @@ class BillController extends BaseController {
 	            billInstance.properties = params
 	            if(!billInstance.hasErrors() && billInstance.save()) {
 	                flash.message = "Bill ${billInstance.toString()} updated"
+	                this.caculate()
 	                redirect(action:show,id:billInstance.id)
 	            }
 	            else {
@@ -106,7 +108,8 @@ class BillController extends BaseController {
     def create = {
         def billInstance = new Bill()
         billInstance.properties = params
-        return ['billInstance':billInstance]
+        def user = Person.get(session.UserID)
+        return ['billInstance':billInstance, user:user]
     }
 
     def save = {
@@ -114,11 +117,21 @@ class BillController extends BaseController {
         if(!billInstance.hasErrors() && billInstance.save()) {
         	session.billID = billInstance.id
             flash.message = "Bill ${billInstance.toString()} created"
+            this.caculate()
             redirect(action:edit,id:billInstance.id)
         }
         else {
         	session.billID = null
-            render(view:'create',model:[billInstance:billInstance])
+        	def user = Person.get(session.UserID)
+            render(view:'create',model:[billInstance:billInstance, user:user])
         }
     }
+	
+	def checkout = {
+		
+	}
+	
+	def checkoutresult = {
+		
+	}
 }

@@ -16,23 +16,23 @@ hibernate {
 environments {
 	development {
 		dataSource {
-			dbCreate = "create-drop" // one of 'create', 'create-drop','update'
+			dbCreate = "update" // one of 'create', 'create-drop','update'
 			//url = "jdbc:hsqldb:mem:devDB"
-			url = "jdbc:mysql://localhost/billtrack_dev"
+			url = "jdbc:mysql://localhost/billtrack_dev?useUnicode=true&characterEncoding=UTF-8"
 		}
 	}
 	test {
 		dataSource {
 			dbCreate = "update"
 			//url = "jdbc:hsqldb:mem:testDb"
-			url = "jdbc:mysql://localhost/billtrack_test"
+			url = "jdbc:mysql://localhost/billtrack_test?useUnicode=true&characterEncoding=UTF-8"
 		}
 	}
 	production {
 		dataSource {
 			dbCreate = "update"
 			//url = "jdbc:hsqldb:file:prodDb;shutdown=true"
-			url = "jdbc:mysql://localhost/billtrack_prod"
+			url = "jdbc:mysql://localhost/billtrack_prod?useUnicode=true&characterEncoding=UTF-8"
 		}
 	}
 }

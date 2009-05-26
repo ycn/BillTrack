@@ -4,10 +4,42 @@ class PersonController extends BaseController {
 	
 	def beforeInterceptor = [action:this.&auth, except:['login']]
     
-    def index = { redirect(action:login,params:params) }
+    def index = { 
+		redirect(action:home, params:params)
+	}
+	
+	def home = {
+		def user = Person.get( session.UserID )
+		if (!user) {
+			this.askAuth()
+		}
+		else {
+			def criteria = Account.createCriteria()
+			def results = criteria {
+				and {
+					eq('consumer', user)
+					eq('confirmed', false)
+				}
+				bill {
+					order("createdDate", "desc")
+				}
+			}
+			def criteria2 = Bill.createCriteria()
+			def results2 = criteria2 {
+				eq('checkOut', false)
+				maxResults(30)
+				order("createdDate", "desc")
+			}
+			return [ accountInstanceList: results,
+			         accountInstanceTotal: results.size(),
+			         billInstanceList: results2,
+			         billInstanceTotal: results2.size(),
+			         user: user, now:new Date(), ifTrue:this.&ifTrue  ]
+		}
+	}
 
     // the delete, save and update actions only accept POST requests
-    static allowedMethods = [save:'POST', update:'POST']
+    static allowedMethods = [update:'POST']
 	
     def edit = {
 		def personInstance = Person.get( session.UserID )
@@ -51,7 +83,6 @@ class PersonController extends BaseController {
     		def person = Person.findByNameAndPassword(params.name, params.password)
     		if (person) {
     			session.UserID = person.id
-    			session.UserName = person.name
     			def redirectParams =
     				   session.originalRequestParams ?
     				   session.originalRequestParams :
@@ -72,7 +103,7 @@ class PersonController extends BaseController {
     
     def logout = {
 		session.UserID = null
-    	session.UserName = null
+		session.originalRequestParams = null
     	flash.message = "Successfully log out"
     	redirect(uri:'/')
     }

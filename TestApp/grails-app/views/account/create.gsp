@@ -29,7 +29,7 @@
                                     <label for="consumer">Consumer:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:accountInstance,field:'consumer','errors')}">
-                                    <g:select optionKey="id" from="${Person.list()}" name="consumer.id" value="${accountInstance?.consumer?.id}" ></g:select>
+                                    <g:select optionKey="id" from="${personList}" name="consumer.id" value="${accountInstance?.consumer?.id}" ></g:select>
                                 </td>
                             </tr> 
                         	
