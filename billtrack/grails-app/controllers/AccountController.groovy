@@ -12,14 +12,21 @@ class AccountController extends BaseController {
     def list = {
 		params.max = Math.min( params.max ? params.max.toInteger() : 20,  100)
 		params.offset = params.offset ? params.offset.toInteger() : 0
+		params.sort = params.sort ? params.sort : "createdDate"
+		params.order = params.order ? params.order : "desc"
 				
 		def c = Account.createCriteria()
 		def result = c {
 			eq('consumer', _base.User)
 			maxResults(params.max)
 			firstResult(params.offset)
-			bill {
-				order("createdDate", "desc")
+			if (params.sort == "createdDate") {
+				bill {
+					order(params.sort, params.order)
+				}
+			}
+			else {
+				order(params.sort, params.order)
 			}
 		}
 		def c2 = Account.createCriteria()

@@ -3,16 +3,16 @@
         <thead>
             <tr>
             
-       	        <g:sortableColumn property="createdDate" title="Date" defaultOrder="desc" />
+       	        <g:if test="${SimpleMode}"><th>Date</th></g:if><g:else><g:sortableColumn property="createdDate" title="Date" defaultOrder="desc" /></g:else>
             
-       	        <g:sortableColumn property="address" title="Address" />
+       	        <g:if test="${SimpleMode}"><th>Address</th></g:if><g:else><g:sortableColumn property="address" title="Address" /></g:else>
        	        
-       	        <th>Payer</th>
+       	        <g:if test="${SimpleMode}"><th>Payer</th></g:if><g:else><th>Comment</th></g:else>
+       	        
+       	        <g:if test="${SimpleMode}"><th>Cost</th></g:if><g:else><g:sortableColumn property="cost" title="Cost" /></g:else>
             
-       	        <g:sortableColumn property="cost" title="Cost" />
-            
-       	        <g:sortableColumn property="checkOut" title="CheckOut" />
-            
+       	        <g:if test="${!SimpleMode}"><g:sortableColumn property="checkOut" title="CheckOut" /></g:if>
+       	        
             	<th>Show</th>
             	
             </tr>
@@ -25,11 +25,11 @@
             
                 <td>${fieldValue(bean:billInstance, field:'address')}</td>
                 
-                <td>${billInstance.payer.encodeAsHTML()}</td>
-            
+                <g:if test="${SimpleMode}"><td>${billInstance.payer.encodeAsHTML()}</td></g:if><g:else><td>${fieldValue(bean:billInstance, field:'comment')}</td></g:else>
+                
                 <td>${fieldValue(bean:billInstance, field:'cost')}</td>
             
-            	<td class="${ifTrue(!billInstance.checkOut,'highlight','')}">${ifTrue(billInstance.checkOut,'Yes','No')}</td>
+            	<g:if test="${!SimpleMode}"><td class="${ifTrue(!billInstance.checkOut,'highlight','')}">${ifTrue(billInstance.checkOut,'Yes','No')}</td></g:if>
             	
             	<td><g:link controller="bill" action="${ifTrue(billInstance.payer==User,'edit','show')}" id="${billInstance.id}">show</g:link></td>
             	

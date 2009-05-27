@@ -12,13 +12,15 @@ class BillController extends BaseController {
     def list = {
 		params.max = Math.min( params.max ? params.max.toInteger() : 20,  100)
 		params.offset = params.offset ? params.offset.toInteger() : 0
+		params.sort = params.sort ? params.sort : "createdDate"
+		params.order = params.order ? params.order : "desc"		
 				
 		def c = Bill.createCriteria()
 		def result = c {
 			eq('payer', _base.User)
 			maxResults(params.max)
 			firstResult(params.offset)
-			order("createdDate", "desc")
+			order(params.sort, params.order)
 		}
 		def c2 = Bill.createCriteria()
 		def total = c2.get {

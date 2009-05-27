@@ -3,15 +3,15 @@
      <thead>
          <tr>
          
-         		<g:sortableColumn property="createdDate" title="Date" defaultOrder="desc" />
+         		<g:if test="${SimpleMode}"><th>Date</th></g:if><g:else><g:sortableColumn property="createdDate" title="Date" defaultOrder="desc" /></g:else>
          
     	        <th>Bill</th>
     	    
-    	    	<th>Consumer</th>
+    	    	<th>Comment</th>
     	    	
-    	        <g:sortableColumn property="cost" title="Cost" />
+    	        <g:if test="${SimpleMode}"><th>Cost</th></g:if><g:else><g:sortableColumn property="cost" title="Cost" /></g:else>
          
-    	        <g:sortableColumn property="confirmed" title="Confirmed" />
+    	        <g:if test="${!SimpleMode}"><g:sortableColumn property="confirmed" title="Confirmed" /></g:if>
     	        
     	        <th>Show</th>
     	        
@@ -25,11 +25,11 @@
          
              <td>${fieldValue(bean:accountInstance, field:'bill')}</td>
              
-             <td>${accountInstance.consumer.encodeAsHTML()}</td>
-         
+             <td>${fieldValue(bean:accountInstance, field:'comment')}</td>
+             
              <td>${fieldValue(bean:accountInstance, field:'cost')}</td>
          
-             <td class="${ifTrue(!accountInstance.confirmed,'highlight','')}">${ifTrue(accountInstance.confirmed,'Yes','No')}</td>
+             <g:if test="${!SimpleMode}"><td class="${ifTrue(!accountInstance.confirmed,'highlight','')}">${ifTrue(accountInstance.confirmed,'Yes','No')}</td></g:if>
              
              <td><g:link controller="account" action="${ifTrue(accountInstance.consumer==User,'edit','show')}" id="${accountInstance.id}">show</g:link></td>
             
