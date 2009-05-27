@@ -23,7 +23,7 @@
 			</td>
 			<td id="sidebar" class="column round-right">
 				<g:if test="${session.UserID}">
-					<div class="welcome-title">From <g:formatDate format="yyyy-MM-dd" date="${session.toCheckOutDate}" /> till now</div>
+					<div class="welcome-title">From <g:if test="${session.toCheckOutDate}"><g:formatDate format="yyyy-MM-dd" date="${session.toCheckOutDate}" /></g:if><g:else>long long ago</g:else> till now</div>
 					<div class="welcome-title">Total Paid : ${session.totalPaid}</div>
 					<div class="welcome-title">Total Consumed : ${session.totalConsumed}</div>
 					<div class="action-button"><g:link controller="bill" action="create">Create Today's Bill</g:link></div>

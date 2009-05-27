@@ -46,7 +46,7 @@ abstract class BaseController {
 					sum('cost')
 				}
 			}
-			session.toCheckOutDate = toCheckOutDate ? toCheckOutDate : 'long long ago'
+			session.toCheckOutDate = toCheckOutDate ? toCheckOutDate : null
 			session.totalPaid = totalPaid ? totalPaid : 0.0
 			session.totalConsumed = totalConsumed ? totalConsumed : 0.0
 		}
