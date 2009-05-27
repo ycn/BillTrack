@@ -7,6 +7,9 @@
         <title>Create Account</title>         
     </head>
     <body>
+    	<div class="nav">
+            <span class="menuButton"><g:link controller="bill" action="edit" id="${accountInstance?.bill?.id}">Back</g:link></span>
+        </div>
         <div class="body">
             <h1>Create Account</h1>
             <g:if test="${flash.message}">
@@ -29,7 +32,7 @@
                                     <label for="consumer">Consumer:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:accountInstance,field:'consumer','errors')}">
-                                    <g:select optionKey="id" from="${personList}" name="consumer.id" value="${accountInstance?.consumer?.id}" ></g:select>
+                                    <g:select optionKey="id" from="${PersonList}" name="consumer.id" value="${accountInstance?.consumer?.id}" ></g:select>
                                 </td>
                             </tr> 
                         	

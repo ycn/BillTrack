@@ -12,12 +12,12 @@
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
-            <g:hasErrors bean="${personInstance}">
+            <g:hasErrors bean="${User}">
             <div class="errors">
-                <g:renderErrors bean="${personInstance}" as="list" />
+                <g:renderErrors bean="${User}" as="list" />
             </div>
             </g:hasErrors>
-            <g:if test="${!session.UserID}">
+            <g:if test="${!Authed}">
             <g:form action="login" method="post" >
                 <div class="dialog">
                     <table>
@@ -27,8 +27,8 @@
                                 <td valign="top" class="name">
                                     <label for="name">Name:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:personInstance,field:'name','errors')}">
-                                    <input type="text" maxlength="30" id="name" name="name" value="${fieldValue(bean:personInstance,field:'name')}"/>
+                                <td valign="top" class="value ${hasErrors(bean:User,field:'name','errors')}">
+                                    <input type="text" maxlength="30" id="name" name="name" value="${fieldValue(bean:User,field:'name')}"/>
                                 </td>
                             </tr> 
                             
@@ -36,8 +36,8 @@
                                 <td valign="top" class="name">
                                     <label for="name">Password:</label>
                                 </td>
-                                <td valign="top" class="value ${hasErrors(bean:personInstance,field:'password','errors')}">
-                                    <input type="password" maxlength="20" id="password" name="password" value="${fieldValue(bean:personInstance,field:'password')}"/>
+                                <td valign="top" class="value ${hasErrors(bean:User,field:'password','errors')}">
+                                    <input type="password" maxlength="20" id="password" name="password" value="${fieldValue(bean:User,field:'password')}"/>
                                 </td>
                             </tr> 
                         

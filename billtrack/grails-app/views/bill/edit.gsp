@@ -7,6 +7,9 @@
         <title>Edit Bill</title>
     </head>
     <body>
+    	<div class="nav">
+            <span class="menuButton"><g:link controller="person" action="home">Home</g:link></span>
+        </div>
         <div class="body">
             <h1>Edit Bill</h1>
             <g:if test="${flash.message}">
@@ -77,7 +80,8 @@
                                     
 <ul>
 <g:each var="a" in="${billInstance?.accounts?}">
-    <li><g:link controller="account" action="show" id="${a.id}">${a?.encodeAsHTML()}</g:link></li>
+    <li><g:link controller="account" action="${ifTrue(a.consumer==User,'edit','show')}" id="${a.id}">${a?.encodeAsHTML()}</g:link>
+    ${ifTrue(!a.confirmed, '&nbsp;&nbsp;<span class=\"highlight\">Not confirmed</span>','')}</li>
 </g:each>
 </ul>
 <g:link controller="account" params="['bill.id':billInstance?.id]" action="create">Add Account</g:link>
@@ -89,7 +93,7 @@
                     </table>
                 </div>
                 <div class="buttons">
-                    <span class="button"><g:actionSubmit class="save" value="Update" /></span>
+                    <span class="button"><g:actionSubmit class="save" value="Done" /></span>
                     <span class="button"><g:actionSubmit class="delete" onclick="return confirm('Are you sure?');" value="Delete" /></span>
                 </div>
             </g:form>

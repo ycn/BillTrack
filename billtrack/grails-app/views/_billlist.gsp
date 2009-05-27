@@ -29,9 +29,9 @@
             
                 <td>${fieldValue(bean:billInstance, field:'cost')}</td>
             
-            	<td class="${ifTrue(!billInstance.checkOut, 'highlight')}">${fieldValue(bean:billInstance, field:'checkOut')}</td>
+            	<td class="${ifTrue(!billInstance.checkOut,'highlight','')}">${ifTrue(billInstance.checkOut,'Yes','No')}</td>
             	
-            	<td><g:link controller="bill" action="show" id="${billInstance.id}">show</g:link></td>
+            	<td><g:link controller="bill" action="${ifTrue(billInstance.payer==User,'edit','show')}" id="${billInstance.id}">show</g:link></td>
             	
             </tr>
         </g:each>
@@ -39,5 +39,7 @@
     </table>
 </div>
 <div class="paginateButtons">
+	<g:if test="${!SimpleMode}">
     <g:paginate total="${billInstanceTotal}" />
+    </g:if>
 </div>

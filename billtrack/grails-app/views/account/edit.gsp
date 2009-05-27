@@ -7,6 +7,9 @@
         <title>Edit Account</title>
     </head>
     <body>
+    	<div class="nav">
+            <span class="menuButton"><g:link controller="bill" action="${ifTrue(accountInstance.bill.payer==User,'edit','show')}" id="${accountInstance.bill.id}">Back to Bill</g:link></span>
+        </div>
         <div class="body">
             <h1>Edit Account</h1>
             <g:if test="${flash.message}">
@@ -73,7 +76,7 @@
                     </table>
                 </div>
                 <div class="buttons">
-                    <span class="button"><g:actionSubmit class="save" value="Update" /></span>
+                    <span class="button"><g:actionSubmit class="save" value="Done" /></span>
                     <span class="button"><g:actionSubmit class="delete" onclick="return confirm('Are you sure?');" value="Delete" /></span>
                 </div>
             </g:form>

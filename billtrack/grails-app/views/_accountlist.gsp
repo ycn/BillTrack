@@ -29,9 +29,9 @@
          
              <td>${fieldValue(bean:accountInstance, field:'cost')}</td>
          
-             <td class="${ifTrue(!accountInstance.confirmed, 'highlight')}">${fieldValue(bean:accountInstance, field:'confirmed')}</td>
+             <td class="${ifTrue(!accountInstance.confirmed,'highlight','')}">${ifTrue(accountInstance.confirmed,'Yes','No')}</td>
              
-             <td><g:link controller="account" action="show" id="${accountInstance.id}">show</g:link></td>
+             <td><g:link controller="account" action="${ifTrue(accountInstance.consumer==User,'edit','show')}" id="${accountInstance.id}">show</g:link></td>
             
             </tr>
         </g:each>
@@ -39,5 +39,7 @@
     </table>
 </div>
 <div class="paginateButtons">
+	<g:if test="${!SimpleMode}">
     <g:paginate total="${accountInstanceTotal}" />
+    </g:if>
 </div>

@@ -7,40 +7,59 @@ class AccountController extends BaseController {
     def index = { redirect(action:list,params:params) }
 
     // the delete, save and update actions only accept POST requests
-    static allowedMethods = [delete:'POST', save:'POST', update:'POST']
+    static allowedMethods = [delete:'POST', save:'POST', done:'POST']
 
     def list = {
-		params.max = Math.min( params.max ? params.max.toInteger() : 10,  100)
-		def user = Person.get( session.UserID )
-		if (user) {
-			[ accountInstanceList: user.accounts, accountInstanceTotal: user.accounts.size(), ifTrue:this.&ifTrue  ]
+		params.max = Math.min( params.max ? params.max.toInteger() : 20,  100)
+		params.offset = params.offset ? params.offset.toInteger() : 0
+				
+		def c = Account.createCriteria()
+		def result = c {
+			eq('consumer', _base.User)
+			maxResults(params.max)
+			firstResult(params.offset)
+			bill {
+				order("createdDate", "desc")
+			}
 		}
-		else {
-			this.askAuth()
+		def c2 = Account.createCriteria()
+		def total = c2.get {
+			eq('consumer', _base.User)
+			projections {
+				rowCount()
+			}
 		}
+		_base.putAll([ accountInstanceList: result,
+		               accountInstanceTotal: total ])
+		return _base
     }
 
     def show = {
         def accountInstance = Account.get( params.id )
-
         if(!accountInstance) {
             flash.message = "Account not found"
             redirect(action:list)
         }
         else {
-        	return [ accountInstance : accountInstance, ifTrue:this.&ifTrue ]
+        	_base.putAll([ accountInstance : accountInstance ])
+        	return _base
         }
     }
 
     def delete = {
         def accountInstance = Account.get( params.id )
         if(accountInstance) {
-        	if (session.UserID == accountInstance.consumer.id) {
+        	if (_base.User == accountInstance.consumer) {
 	            try {
 	                accountInstance.delete()
 	                flash.message = "Account ${accountInstance.toString()} deleted"
-	                this.caculate()
-	                redirect(action:list)
+	                loadStatus()
+	                if (_base.User == accountInstance.bill.payer) {
+	                	redirect(controller:bill,action:edit, id:accountInstance.bill.id)
+	                }
+	                else {
+	                	redirect(controller:bill,action:show, id:accountInstance.bill.id)
+	                }
 	            }
 	            catch(org.springframework.dao.DataIntegrityViolationException e) {
 	                flash.message = "Account ${accountInstance.toString()} could not be deleted"
@@ -48,7 +67,7 @@ class AccountController extends BaseController {
 	            }
         	}
         	else {
-        		this.permissionDenied()
+        		permissionDenied()
         	}
         }
         else {
@@ -59,49 +78,50 @@ class AccountController extends BaseController {
 
     def edit = {
         def accountInstance = Account.get( params.id )
-
         if(!accountInstance) {
             flash.message = "Account not found"
             redirect(action:list)
         }
         else {
-        	if (session.UserID == accountInstance.consumer.id) {
-        		return [ accountInstance : accountInstance ]
+        	if (_base.User == accountInstance.consumer) {
+        		_base.putAll([ accountInstance : accountInstance ])
+        		return _base
         	}
         	else {
-        		this.permissionDenied()
+        		permissionDenied()
         	}
         }
     }
 
-    def update = {
+    def done = {
         def accountInstance = Account.get( params.id )
         if(accountInstance) {
-        	if (session.UserID == accountInstance.consumer.id) {
+        	if (_base.User == accountInstance.consumer) {
 	            if(params.version) {
 	                def version = params.version.toLong()
 	                if(accountInstance.version > version) {
-	                    
 	                    accountInstance.errors.rejectValue("version", "account.optimistic.locking.failure", "Another user has updated this Account while you were editing.")
-	                    render(view:'edit',model:[accountInstance:accountInstance])
+	                    _base.putAll([accountInstance:accountInstance])
+	                    render(view:'edit',model:_base)
 	                    return
 	                }
 	            }
 	            accountInstance.properties = params
 	            if (accountInstance.confirmed) {
 	            	accountInstance.confirmedDate = new Date()
-	            	this.caculate()
+	            	loadStatus()
 	            }
 	            if(!accountInstance.hasErrors() && accountInstance.save()) {
 	                flash.message = "Account ${accountInstance.toString()} updated"
 	                redirect(action:show,id:accountInstance.id)
 	            }
 	            else {
-	                render(view:'edit',model:[accountInstance:accountInstance])
+	            	_base.putAll([accountInstance:accountInstance])
+                    render(view:'edit',model:_base)
 	            }
         	}
         	else {
-        		this.permissionDenied()
+        		permissionDenied()
         	}
         }
         else {
@@ -111,26 +131,32 @@ class AccountController extends BaseController {
     }
 
     def create = {
-        def accountInstance = new Account()
-        accountInstance.properties = params
-        def personList = Person.list()
-        return ['accountInstance':accountInstance, personList:personList]
+		if (params['bill.id']) {
+	        def accountInstance = new Account()
+	        accountInstance.properties = params
+	        _base.putAll([accountInstance:accountInstance, PersonList:Person.list()])
+	        return _base
+		}
+		else {
+			permissionDenied()
+		}
     }
 
     def save = {
         def accountInstance = new Account(params)
         if(!accountInstance.hasErrors() && accountInstance.save()) {
             flash.message = "Account ${accountInstance.toString()} created"
-            this.caculate()
-            if (session.billID) {
-            	redirect(controller:'bill',action:'edit',id:session.billID)
+            loadStatus()
+            if (_base.User == accountInstance.bill.payer) {
+            	redirect(controller:'bill',action:'edit',id:accountInstance.bill.id)
             }
             else {
-            	redirect(uri:'/')
+            	redirect(controller:'bill',action:'show',id:accountInstance.bill.id)
             }
         }
         else {
-        	render(view:'create',model:[accountInstance:accountInstance])
+        	_base.putAll([accountInstance:accountInstance, PersonList:Person.list()])
+        	render(view:'create',model:_base)
         }
     }
 }

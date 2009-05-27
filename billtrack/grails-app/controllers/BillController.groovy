@@ -7,37 +7,51 @@ class BillController extends BaseController {
     def index = { redirect(action:list,params:params) }
 
     // the delete, save and update actions only accept POST requests
-    static allowedMethods = [delete:'POST', save:'POST', update:'POST']
+    static allowedMethods = [delete:'POST', save:'POST', done:'POST']
 
     def list = {
-        params.max = Math.min( params.max ? params.max.toInteger() : 10,  100)
-        def user = Person.get( session.UserID )
-        if (user) {
-        	[ billInstanceList: user.paidBills, billInstanceTotal: user.paidBills.size(), ifTrue:this.&ifTrue  ]
-        }
-        else {
-        	this.askAuth()
-        }
+		params.max = Math.min( params.max ? params.max.toInteger() : 20,  100)
+		params.offset = params.offset ? params.offset.toInteger() : 0
+				
+		def c = Bill.createCriteria()
+		def result = c {
+			eq('payer', _base.User)
+			maxResults(params.max)
+			firstResult(params.offset)
+			order("createdDate", "desc")
+		}
+		def c2 = Bill.createCriteria()
+		def total = c2.get {
+			eq('payer', _base.User)
+			projections {
+				rowCount()
+			}
+		}
+		_base.putAll([ billInstanceList: result,
+		               billInstanceTotal: total ])
+		return _base
     }
 
     def show = {
         def billInstance = Bill.get( params.id )
-
         if(!billInstance) {
             flash.message = "Bill not found"
             redirect(action:list)
         }
-        else { return [ billInstance : billInstance, ifTrue:this.&ifTrue  ] }
+        else {
+        	_base.putAll([ billInstance : billInstance ])
+        	return _base
+        }
     }
 
     def delete = {
         def billInstance = Bill.get( params.id )
         if(billInstance) {
-        	if (session.UserID == billInstance.payer.id) {
+        	if (_base.User == billInstance.payer) {
 	            try {
 	                billInstance.delete()
 	                flash.message = "Bill ${billInstance.toString()} deleted"
-	                this.caculate()
+	                loadStatus()
 	                redirect(action:list)
 	            }
 	            catch(org.springframework.dao.DataIntegrityViolationException e) {
@@ -46,7 +60,7 @@ class BillController extends BaseController {
 	            }
         	}
         	else {
-        		this.permissionDenied()
+        		permissionDenied()
         	}
         }
         else {
@@ -57,46 +71,47 @@ class BillController extends BaseController {
 
     def edit = {
         def billInstance = Bill.get( params.id )
-
         if(!billInstance) {
             flash.message = "Bill not found"
             redirect(action:list)
         }
         else {
-        	if (session.UserID == billInstance.payer.id) {
-        		return [ billInstance : billInstance ]
+        	if (_base.User == billInstance.payer) {
+        		_base.putAll([ billInstance : billInstance ])
+        		return _base
         	}
         	else {
-        		this.permissionDenied()
+        		permissionDenied()
         	}
         }
     }
 
-    def update = {
+    def done = {
         def billInstance = Bill.get( params.id )
         if(billInstance) {
-        	if (session.UserID == billInstance.payer.id) {
+        	if (_base.User == billInstance.payer) {
 	            if(params.version) {
 	                def version = params.version.toLong()
 	                if(billInstance.version > version) {
-	                    
 	                    billInstance.errors.rejectValue("version", "bill.optimistic.locking.failure", "Another user has updated this Bill while you were editing.")
-	                    render(view:'edit',model:[billInstance:billInstance])
+	                    _base.putAll([billInstance:billInstance])
+	                    render(view:'edit',model:_base)
 	                    return
 	                }
 	            }
 	            billInstance.properties = params
 	            if(!billInstance.hasErrors() && billInstance.save()) {
 	                flash.message = "Bill ${billInstance.toString()} updated"
-	                this.caculate()
+	                loadStatus()
 	                redirect(action:show,id:billInstance.id)
 	            }
 	            else {
-	                render(view:'edit',model:[billInstance:billInstance])
+	            	_base.putAll([billInstance:billInstance])
+                    render(view:'edit',model:_base)
 	            }
         	}
         	else {
-        		this.permissionDenied()
+        		permissionDenied()
         	}
         }
         else {
@@ -108,22 +123,20 @@ class BillController extends BaseController {
     def create = {
         def billInstance = new Bill()
         billInstance.properties = params
-        def user = Person.get(session.UserID)
-        return ['billInstance':billInstance, user:user]
+        _base.putAll([billInstance:billInstance])
+        return _base
     }
 
     def save = {
         def billInstance = new Bill(params)
         if(!billInstance.hasErrors() && billInstance.save()) {
-        	session.billID = billInstance.id
             flash.message = "Bill ${billInstance.toString()} created"
-            this.caculate()
+            loadStatus()
             redirect(action:edit,id:billInstance.id)
         }
         else {
-        	session.billID = null
-        	def user = Person.get(session.UserID)
-            render(view:'create',model:[billInstance:billInstance, user:user])
+        	_base.putAll([billInstance:billInstance])
+            return _base
         }
     }
 	

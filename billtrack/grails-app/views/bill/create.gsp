@@ -7,6 +7,9 @@
         <title>Create Bill</title>         
     </head>
     <body>
+    	<div class="nav">
+            <span class="menuButton"><g:link controller="person" action="home">Back</g:link></span>
+        </div>
         <div class="body">
             <h1>Create Bill</h1>
             <g:if test="${flash.message}">
@@ -38,7 +41,7 @@
                                     <label for="payer">Payer:</label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean:billInstance,field:'payer','errors')}">
-                                	${user.encodeAsHTML()}
+                                	${User.encodeAsHTML()}
                                 </td>
                             </tr> 
                         

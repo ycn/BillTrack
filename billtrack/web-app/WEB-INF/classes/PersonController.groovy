@@ -4,89 +4,66 @@ class PersonController extends BaseController {
 	
 	def beforeInterceptor = [action:this.&auth, except:['login']]
     
-    def index = { 
-		redirect(action:home, params:params)
-	}
+    def index = { redirect(action:home, params:params) }
+	
+	// the delete, save and update actions only accept POST requests
+    static allowedMethods = [update:'POST', create:'GET']
 	
 	def home = {
-		def user = Person.get( session.UserID )
-		if (!user) {
-			this.askAuth()
-		}
-		else {
-			def criteria = Account.createCriteria()
-			def results = criteria {
-				and {
-					eq('consumer', user)
-					eq('confirmed', false)
-				}
-				bill {
-					order("createdDate", "desc")
-				}
-			}
-			def criteria2 = Bill.createCriteria()
-			def results2 = criteria2 {
-				eq('checkOut', false)
-				maxResults(30)
+		def c = Account.createCriteria()
+		def results = c {
+			eq('consumer', _base.User)
+			eq('confirmed', false)
+			bill {
 				order("createdDate", "desc")
 			}
-			return [ accountInstanceList: results,
-			         accountInstanceTotal: results.size(),
-			         billInstanceList: results2,
-			         billInstanceTotal: results2.size(),
-			         user: user, now:new Date(), ifTrue:this.&ifTrue  ]
 		}
+		def c2 = Bill.createCriteria()
+		def results2 = c2 {
+			eq('checkOut', false)
+			order("createdDate", "desc")
+		}
+		_base.putAll([ SimpleMode: true,
+		               accountInstanceList: results,
+					   accountInstanceTotal: results.size(),
+					   billInstanceList: results2,
+					   billInstanceTotal: results2.size() ])
+		return _base
 	}
 
-    // the delete, save and update actions only accept POST requests
-    static allowedMethods = [update:'POST']
-	
-    def edit = {
-		def personInstance = Person.get( session.UserID )
-        if(!personInstance) {
-        	this.askAuth()
-        }
-        else {
-            return [ personInstance : personInstance ]
-        }
-    }
+    def edit = { return _base }
 
     def update = {
-        def personInstance = Person.get( session.UserID )
-        if(personInstance) {
-        	if(params.version) {
-                def version = params.version.toLong()
-                if(personInstance.version > version) {
-                    
-                    personInstance.errors.rejectValue("version", "person.optimistic.locking.failure", "Another user has updated this Person while you were editing.")
-                    render(view:'edit',model:[personInstance:personInstance])
-                    return
-                }
+		if(params.version) {
+            def version = params.version.toLong()
+            if(_base.User.version > version) {
+            	_base.User.errors.rejectValue("version", "person.optimistic.locking.failure", "Another user has updated this Person while you were editing.")
+                render(view:'edit',model:_base)
+                return
             }
-            personInstance.properties = params
-            if(!personInstance.hasErrors() && personInstance.save()) {
-                flash.message = "Person ${personInstance.toString()} updated"
-                redirect(uri:'/')
-            }
-            else {
-                render(view:'edit',model:[personInstance:personInstance])
-            }
+        }
+		params.password = params.password.encodeAsMD5()
+    	_base.User.properties = params
+        if(!_base.User.hasErrors() && _base.User.save()) {
+            flash.message = "Settings ${_base.User.toString()} updated"
+            redirect(controller:'person',action:'home')
         }
         else {
-        	this.askAuth()
+            render(view:'edit',model:_base)
         }
-		
     }
 
     def login = {
     	if (request.method == "POST") {
+    		params.password = params.password.encodeAsMD5()
     		def person = Person.findByNameAndPassword(params.name, params.password)
     		if (person) {
     			session.UserID = person.id
+    			loadStatus()
     			def redirectParams =
     				   session.originalRequestParams ?
     				   session.originalRequestParams :
-    				   [uri:'/']
+    				   [controller:'person',action:'home']
     			redirect(redirectParams)
     		}
     		else {
@@ -94,17 +71,16 @@ class PersonController extends BaseController {
     		}
     	}
     	else {
-    		if (this.isAuth()) {
+    		if (_base.Authed) {
     			flash.message = "Allready logged in"
-    			redirect(uri:'/')
+    			redirect(controller:'person',action:'home')
     		}
     	}
     }
     
     def logout = {
-		session.UserID = null
-		session.originalRequestParams = null
+		clearSession()
     	flash.message = "Successfully log out"
-    	redirect(uri:'/')
+    	redirect(controller:'person',action:'home')
     }
 }

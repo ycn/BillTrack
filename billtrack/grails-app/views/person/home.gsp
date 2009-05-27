@@ -8,8 +8,8 @@
         <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
         </g:if>
-        <g:if test="${session.UserID}">
-        	<h3>Hello ${user.name}! Today is <g:formatDate format="yyyy-MM-dd" date="${now}" />.</h3>
+        <g:if test="${Authed}">
+        	<h3>Hello ${User.name}! Today is <g:formatDate format="yyyy-MM-dd" date="${Now}" />.</h3>
         	<br />
 			<h4>Accounts to confirm ( ${accountInstanceTotal} ) </h4>
 			<g:render template="/accountlist" />

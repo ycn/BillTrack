@@ -60,7 +60,8 @@ li.last {margin-left:6px;}
 
 #content table {
     border: 1px solid #ccc;
-    width: 540px;
+    width: 539px;
+    margin-left:1px;
 }
 #content tr {
     border: 0;

@@ -7,6 +7,9 @@
         <title>Show Account</title>
     </head>
     <body>
+    	<div class="nav">
+            <span class="menuButton"><g:link controller="bill" action="${ifTrue(accountInstance.bill.payer==User,'edit','show')}" id="${accountInstance.bill.id}">Back to Bill</g:link></span>
+        </div>
         <div class="body">
             <h1>Show Account</h1>
             <g:if test="${flash.message}">
@@ -19,7 +22,7 @@
                         <tr class="prop">
                             <td valign="top" class="name">Bill:</td>
                             
-                            <td valign="top" class="value"><g:link controller="bill" action="show" id="${accountInstance?.bill?.id}">${accountInstance?.bill?.encodeAsHTML()}</g:link></td>
+                            <td valign="top" class="value"><g:link controller="bill" action="${ifTrue(accountInstance.bill.payer==User,'edit','show')}" id="${accountInstance?.bill?.id}">${accountInstance?.bill?.encodeAsHTML()}</g:link></td>
                             
                         </tr>
                     
@@ -47,7 +50,7 @@
                         <tr class="prop">
                             <td valign="top" class="name">Confirmed:</td>
                             
-                            <td valign="top" class="value ${ifTrue(!accountInstance.confirmed,'highlight')}">${fieldValue(bean:accountInstance, field:'confirmed')}</td>
+                            <td valign="top" class="value ${ifTrue(!accountInstance.confirmed,'highlight','')}">${ifTrue(accountInstance.confirmed,'Yes','No')}</td>
                             
                         </tr>
                     
@@ -60,13 +63,6 @@
                     
                     </tbody>
                 </table>
-            </div>
-            <div class="buttons">
-                <g:form>
-                    <input type="hidden" name="id" value="${accountInstance?.id}" />
-                    <span class="button"><g:actionSubmit class="edit" value="Edit" /></span>
-                    <span class="button"><g:actionSubmit class="delete" onclick="return confirm('Are you sure?');" value="Delete" /></span>
-                </g:form>
             </div>
         </div>
     </body>

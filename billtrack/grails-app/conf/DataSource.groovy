@@ -18,21 +18,21 @@ environments {
 		dataSource {
 			dbCreate = "update" // one of 'create', 'create-drop','update'
 			//url = "jdbc:hsqldb:mem:devDB"
-			url = "jdbc:mysql://localhost/billtrack_dev?useUnicode=true&characterEncoding=UTF-8"
+			url = "jdbc:mysql://192.168.1.30/billtrack_dev?useUnicode=true&characterEncoding=UTF-8"
 		}
 	}
 	test {
 		dataSource {
 			dbCreate = "update"
 			//url = "jdbc:hsqldb:mem:testDb"
-			url = "jdbc:mysql://localhost/billtrack_test?useUnicode=true&characterEncoding=UTF-8"
+			url = "jdbc:mysql://192.168.1.30/billtrack_test?useUnicode=true&characterEncoding=UTF-8"
 		}
 	}
 	production {
 		dataSource {
 			dbCreate = "update"
 			//url = "jdbc:hsqldb:file:prodDb;shutdown=true"
-			url = "jdbc:mysql://localhost/billtrack_prod?useUnicode=true&characterEncoding=UTF-8"
+			url = "jdbc:mysql://localhost/yay_track?useUnicode=true&characterEncoding=UTF-8"
 		}
 	}
 }
