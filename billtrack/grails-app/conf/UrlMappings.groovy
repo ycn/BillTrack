@@ -27,29 +27,13 @@ class UrlMappings {
     	  controller = "bill"
     	  action = "checkout"
       }
-      "/checkoutresult"{
+      "/checkout/result"{
     	  controller = "bill"
     	  action = "checkoutresult"
       }
       "/settings"{
     	  controller = "person"
     	  action = "edit"
-      }
-      "/bill"{
-    	  controller = "bill"
-    	  action = "create"
-      }
-      "/bill/$id"{
-    	  controller = "bill"
-    	  action = "show"
-      }
-      "/account"{
-    	  controller = "account"
-    	  action = "create"
-      }
-      "/account/$id"{
-    	  controller = "account"
-    	  action = "show"
       }
 	}
 }

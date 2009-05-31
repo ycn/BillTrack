@@ -138,7 +138,7 @@ class BillController extends BaseController {
         }
         else {
         	_base.putAll([billInstance:billInstance])
-            return _base
+            render(view:'create',model:_base)
         }
     }
 	
