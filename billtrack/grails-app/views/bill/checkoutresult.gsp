@@ -6,7 +6,7 @@
     </head>
     <body>
         <div class="body">
-            <h1>Check Out Result</h1>
+            <h1>Check Out ${checkout_num} Bills</h1>
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>

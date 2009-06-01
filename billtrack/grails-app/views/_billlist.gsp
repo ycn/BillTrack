@@ -36,10 +36,10 @@
                 <td>${fieldValue(bean:billInstance, field:'cost')}</td>
                 
                 <td>
-                	<span class="${ifTrue(map.get(i).confirmed_num!=billInstance.accounts.size(),'highlight','')}">
-                	${map.get(i).confirmed_num} / ${billInstance.accounts.size()}</span>
-                	<span class="${ifTrue(map.get(i).confirmed_cost!=billInstance.cost,'highlight','')}">
-                	 ( sum: ${map.get(i).confirmed_cost} ) </span>
+                	<span class="${ifTrue(!map[(billInstance.id)].eq_num,'highlight','')}">
+                	${map[(billInstance.id)].confirmed_num} / ${billInstance.accounts.size()}</span>
+                	<span class="${ifTrue(!map[(billInstance.id)].eq_cost,'highlight','')}">
+                	 ( sum: ${map[(billInstance.id)].confirmed_cost} ) </span>
                 </td>
             
             	<g:if test="${!SimpleMode}"><td class="${ifTrue(!billInstance.checkOut,'highlight','')}">${ifTrue(billInstance.checkOut,'Yes','No')}</td></g:if>

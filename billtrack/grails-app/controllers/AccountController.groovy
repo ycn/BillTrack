@@ -6,7 +6,6 @@ class AccountController extends BaseController {
 	
     def index = { redirect(action:list,params:params) }
 
-    // the delete, save and update actions only accept POST requests
     static allowedMethods = [delete:'POST', save:'POST', done:'POST']
 
     def list = {
@@ -60,7 +59,7 @@ class AccountController extends BaseController {
 	            try {
 	                accountInstance.delete()
 	                flash.message = "Account ${accountInstance.toString()} deleted"
-	                loadStatus()
+	                session.load_ttl = 1
 	                redirect(action:list)
 	            }
 	            catch(org.springframework.dao.DataIntegrityViolationException e) {
@@ -111,7 +110,7 @@ class AccountController extends BaseController {
 	            accountInstance.properties = params
 	            if (accountInstance.confirmed) {
 	            	accountInstance.confirmedDate = new Date()
-	            	loadStatus()
+	            	session.load_ttl = 1
 	            }
 	            if(!accountInstance.hasErrors() && accountInstance.save()) {
 	                flash.message = "Account ${accountInstance.toString()} updated"
@@ -148,7 +147,7 @@ class AccountController extends BaseController {
         def accountInstance = new Account(params)
         if(!accountInstance.hasErrors() && accountInstance.save()) {
             flash.message = "Account ${accountInstance.toString()} created"
-            loadStatus()
+            session.load_ttl = 1
             if (_base.User == accountInstance.bill.payer) {
             	redirect(controller:'bill',action:'edit',id:accountInstance.bill.id)
             }

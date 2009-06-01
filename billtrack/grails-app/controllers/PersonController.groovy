@@ -1,5 +1,3 @@
-
-
 class PersonController extends BaseController {
 	
 	def beforeInterceptor = [action:this.&auth, except:['login']]
@@ -23,18 +21,20 @@ class PersonController extends BaseController {
 			eq('checkOut', false)
 			order("createdDate", "desc")
 		}
-		def map = []
-		def sum = 0.0
+		def map = new HashMap()
+		def sum = 0
 		def num = 0
 		results2.each{
-			sum = 0.0
+			sum = 0
 			num = 0
 			it.accounts.each{
 				if (it.confirmed) num++
-				sum += it.cost
+				sum += it.cost as BigDecimal
 			}
-			map.push(['confirmed_num':num,
-			         'confirmed_cost':sum])
+			map[(it.id)] = ['confirmed_num':num,
+			                'confirmed_cost':sum,
+			                'eq_num':(num == it.accounts.size()),
+			                'eq_cost':(sum == it.cost as BigDecimal)]
 		}
 		_base.putAll([ SimpleMode: true,
 		               accountInstanceList: results,
@@ -73,7 +73,7 @@ class PersonController extends BaseController {
     		def person = Person.findByNameAndPassword(params.name, params.password)
     		if (person) {
     			session.UserID = person.id
-    			loadStatus()
+    			session.load_ttl = 1
     			def redirectParams =
     				   session.originalRequestParams ?
     				   session.originalRequestParams :

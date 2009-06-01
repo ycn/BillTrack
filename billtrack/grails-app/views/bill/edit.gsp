@@ -72,6 +72,20 @@
                                 </td>
                             </tr> 
                         
+                        	<tr class="prop">
+	                            <td valign="top" class="name">Check Out:</td>
+	                            
+	                            <td valign="top" class="value ${ifTrue(!billInstance.checkOut,'highlight','')}">${ifTrue(billInstance.checkOut,'Yes','No')}</td>
+	                            
+	                        </tr>
+	                    
+	                        <tr class="prop">
+	                            <td valign="top" class="name">Check Out Date:</td>
+	                            
+	                            <td valign="top" class="value"><g:formatDate format="yyyy-MM-dd" date="${billInstance?.checkOutDate}" /></td>
+	                            
+	                        </tr>
+                        
                             <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="accounts">Accounts:</label>

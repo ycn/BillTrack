@@ -13,13 +13,20 @@ abstract class BaseController {
 		}
 		else {
 			session.originalRequestParams = null
+			loadStatus()
 			_base.putAll([ Authed: true,
 			               User: Person.get(session.UserID) ])
 		}
 	}
 	
 	def loadStatus() {
-		if (session.UserID) {
+		if (!session.UserID) return
+		if (!session.load_ttl) return
+		if (session.load_ttl <= 0) return
+		session.load_ttl--
+		
+		if (session.load_ttl == 0) {
+			
 			def user = Person.get(session.UserID)
 			def c = Bill.createCriteria()
 			def toCheckOutDate = c.get {
@@ -29,26 +36,29 @@ abstract class BaseController {
 				}
 			}
 			def c2 = Bill.createCriteria()
-			def totalPaid = c2.get {
+			def results = c2 {
 				eq('payer', user)
 				eq('checkOut', false)
-				projections {
-					sum('cost')
-				}
 			}
+			def totalPaid = 0
+			results.each{
+				totalPaid += it.cost as BigDecimal
+			}
+			
 			def c3 = Account.createCriteria()
-			def totalConsumed = c3.get {
+			def results2 = c3 {
 				eq('consumer', user)
 				bill {
 					eq('checkOut', false)
 				}
-				projections {
-					sum('cost')
-				}
+			}
+			def totalConsumed = 0
+			results2.each{
+				totalConsumed += it.cost as BigDecimal
 			}
 			session.toCheckOutDate = toCheckOutDate ? toCheckOutDate : null
-			session.totalPaid = totalPaid ? totalPaid : 0.0
-			session.totalConsumed = totalConsumed ? totalConsumed : 0.0
+			session.totalPaid = totalPaid ? totalPaid : 0g
+			session.totalConsumed = totalConsumed ? totalConsumed : 0g
 		}
 	}
 	
@@ -56,8 +66,8 @@ abstract class BaseController {
 		session.UserID = null
 		session.originalRequestParams = null
 		session.toCheckOutDate = 'long long ago'
-		session.totalPaid = 0.0
-		session.totalConsumed = 0.0
+		session.totalPaid = 0g
+		session.totalConsumed = 0g
 	}
 
 	def askAuth() {

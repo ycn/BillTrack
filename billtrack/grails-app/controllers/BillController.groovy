@@ -6,7 +6,6 @@ class BillController extends BaseController {
     
     def index = { redirect(action:list,params:params) }
 
-    // the delete, save and update actions only accept POST requests
     static allowedMethods = [delete:'POST', save:'POST', done:'POST', checkoutresult:'POST']
 
     def list = {
@@ -16,7 +15,7 @@ class BillController extends BaseController {
 		params.order = params.order ? params.order : "desc"		
 				
 		def c = Bill.createCriteria()
-		def result = c {
+		def results = c {
 			eq('payer', _base.User)
 			maxResults(params.max)
 			firstResult(params.offset)
@@ -29,21 +28,23 @@ class BillController extends BaseController {
 				rowCount()
 			}
 		}
-		def map = []
-		def sum = 0.0
+		def map = new HashMap()
+		def sum = 0
 		def num = 0
-		result.each{
-			sum = 0.0
+		results.each{
+			sum = 0
 			num = 0
 			it.accounts.each{
 				if (it.confirmed) num++
-				sum += it.cost
+				sum += it.cost as BigDecimal
 			}
-			map.push(['confirmed_num':num,
-			         'confirmed_cost':sum])
+			map[(it.id)] = ['confirmed_num':num,
+			                'confirmed_cost':sum,
+			                'eq_num':(num == it.accounts.size()),
+			                'eq_cost':(sum == it.cost as BigDecimal)]
 		}
 		_base.putAll([ map:map,
-		               billInstanceList: result,
+		               billInstanceList: results,
 		               billInstanceTotal: total ])
 		return _base
     }
@@ -67,7 +68,7 @@ class BillController extends BaseController {
 	            try {
 	                billInstance.delete()
 	                flash.message = "Bill ${billInstance.toString()} deleted"
-	                loadStatus()
+	                session.load_ttl = 1
 	                redirect(action:list)
 	            }
 	            catch(org.springframework.dao.DataIntegrityViolationException e) {
@@ -118,7 +119,7 @@ class BillController extends BaseController {
 	            billInstance.properties = params
 	            if(!billInstance.hasErrors() && billInstance.save()) {
 	                flash.message = "Bill ${billInstance.toString()} updated"
-	                loadStatus()
+	                session.load_ttl = 1
 	                redirect(action:show,id:billInstance.id)
 	            }
 	            else {
@@ -147,7 +148,7 @@ class BillController extends BaseController {
         def billInstance = new Bill(params)
         if(!billInstance.hasErrors() && billInstance.save()) {
             flash.message = "Bill ${billInstance.toString()} created"
-            loadStatus()
+            session.load_ttl = 1
             redirect(action:edit,id:billInstance.id)
         }
         else {
@@ -162,18 +163,20 @@ class BillController extends BaseController {
 			eq('checkOut', false)
 			order("createdDate", "desc")
 		}
-		def map = []
-		def sum = 0.0
+		def map = new HashMap()
+		def sum = 0
 		def num = 0
 		results.each{
-			sum = 0.0
+			sum = 0
 			num = 0
 			it.accounts.each{
 				if (it.confirmed) num++
-				sum += it.cost
+				sum += it.cost as BigDecimal
 			}
-			map.push(['confirmed_num':num,
-			         'confirmed_cost':sum])
+			map[(it.id)] = ['confirmed_num':num,
+			                'confirmed_cost':sum,
+			                'eq_num':(num == it.accounts.size()),
+			                'eq_cost':(sum == it.cost as BigDecimal)]
 		}
 		_base.putAll([ map:map,
 		               billInstanceList: results,
@@ -186,27 +189,42 @@ class BillController extends BaseController {
 		def billInstance
 		def paidmap = new HashMap()
 		def consumedmap = new HashMap()
+		def sum = 0
+		def num = 0
+		def checkout_num = 0
 		params.each{
 			try {
 				billID = it.key.toInteger()
 				billInstance = Bill.get(billID)
 				if (billInstance) {
-					billInstance.checkOut = true;
-					billInstance.checkOutDate = new Date()
-					if(!billInstance.hasErrors() && billInstance.save()) {
-						if (!paidmap.get(billInstance.payer.name, false))
-							paidmap[(billInstance.payer.name)] = 0
-						paidmap[(billInstance.payer.name)] += billInstance.cost
-						billInstance.accounts.each{
-							if (!consumedmap.get(it.consumer.name, false))
-								consumedmap[(it.consumer.name)] = 0
-							consumedmap[(it.consumer.name)] += it.cost
-						}
-		            }
+					sum = 0
+					num = 0
+					billInstance.accounts.each{
+						if (it.confirmed) num++
+						sum += it.cost as BigDecimal
+					}
+					if ( (num == billInstance.accounts.size())
+						 && (sum == billInstance.cost as BigDecimal) ) {
+						billInstance.checkOut = true;
+						billInstance.checkOutDate = new Date()
+						if(!billInstance.hasErrors() && billInstance.save()) {
+							checkout_num++
+							if (!paidmap.get(billInstance.payer.name, false))
+								paidmap[(billInstance.payer.name)] = 0g
+							paidmap[(billInstance.payer.name)] += billInstance.cost as BigDecimal
+							billInstance.accounts.each{
+								if (!consumedmap.get(it.consumer.name, false))
+									consumedmap[(it.consumer.name)] = 0g
+								consumedmap[(it.consumer.name)] += it.cost as BigDecimal
+							}
+			            }
+					}
 				}
 			} catch (Exception e) {}
 		}
-		_base.putAll([users:consumedmap.keySet(),
+		session.load_ttl = 1
+		_base.putAll([checkout_num:checkout_num,
+		              users:consumedmap.keySet(),
 		              paidmap:paidmap,
 		              consumedmap:consumedmap])
 		return _base

@@ -6,7 +6,7 @@
     </head>
     <body>
         <div class="body">
-            <h1>Check Out ( ${billInstanceTotal} ) </h1>
+            <h1>${billInstanceTotal} Bills to Check Out </h1>
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
@@ -49,10 +49,10 @@
 		                <td>${fieldValue(bean:billInstance, field:'cost')}</td>
 		                
 		                <td>
-		                	<span class="${ifTrue(map.get(i).confirmed_num!=billInstance.accounts.size(),'highlight','')}">
-		                	${map.get(i).confirmed_num} / ${billInstance.accounts.size()}</span>
-		                	<span class="${ifTrue(map.get(i).confirmed_cost!=billInstance.cost,'highlight','')}">
-		                	 ( sum: ${map.get(i).confirmed_cost} ) </span>
+		                	<span class="${ifTrue(!map[(billInstance.id)].eq_num,'highlight','')}">
+		                	${map[(billInstance.id)].confirmed_num} / ${billInstance.accounts.size()}</span>
+		                	<span class="${ifTrue(!map[(billInstance.id)].eq_cost,'highlight','')}">
+		                	 ( sum: ${map[(billInstance.id)].confirmed_cost} ) </span>
 		                </td>
 		            
 		            	<td><g:link controller="bill" action="show" id="${billInstance.id}">show</g:link></td>
