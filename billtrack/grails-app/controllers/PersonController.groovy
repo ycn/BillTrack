@@ -23,9 +23,23 @@ class PersonController extends BaseController {
 			eq('checkOut', false)
 			order("createdDate", "desc")
 		}
+		def map = []
+		def sum = 0.0
+		def num = 0
+		results2.each{
+			sum = 0.0
+			num = 0
+			it.accounts.each{
+				if (it.confirmed) num++
+				sum += it.cost
+			}
+			map.push(['confirmed_num':num,
+			         'confirmed_cost':sum])
+		}
 		_base.putAll([ SimpleMode: true,
 		               accountInstanceList: results,
 					   accountInstanceTotal: results.size(),
+					   map:map,
 					   billInstanceList: results2,
 					   billInstanceTotal: results2.size() ])
 		return _base

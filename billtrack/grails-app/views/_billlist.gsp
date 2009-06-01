@@ -7,9 +7,13 @@
             
        	        <g:if test="${SimpleMode}"><th>Address</th></g:if><g:else><g:sortableColumn property="address" title="Address" /></g:else>
        	        
-       	        <g:if test="${SimpleMode}"><th>Payer</th></g:if><g:else><th>Comment</th></g:else>
+       	        <g:if test="${SimpleMode}"><th>Payer</th></g:if>
+       	        
+       	        <th>Comment</th>
        	        
        	        <g:if test="${SimpleMode}"><th>Cost</th></g:if><g:else><g:sortableColumn property="cost" title="Cost" /></g:else>
+       	        
+       	        <th>Confirmed</th>
             
        	        <g:if test="${!SimpleMode}"><g:sortableColumn property="checkOut" title="CheckOut" /></g:if>
        	        
@@ -25,9 +29,18 @@
             
                 <td>${fieldValue(bean:billInstance, field:'address')}</td>
                 
-                <g:if test="${SimpleMode}"><td>${billInstance.payer.encodeAsHTML()}</td></g:if><g:else><td>${fieldValue(bean:billInstance, field:'comment')}</td></g:else>
+                <g:if test="${SimpleMode}"><td>${billInstance.payer.encodeAsHTML()}</td></g:if>
+
+				<td>${fieldValue(bean:billInstance, field:'comment')}</td>
                 
                 <td>${fieldValue(bean:billInstance, field:'cost')}</td>
+                
+                <td>
+                	<span class="${ifTrue(map.get(i).confirmed_num!=billInstance.accounts.size(),'highlight','')}">
+                	${map.get(i).confirmed_num} / ${billInstance.accounts.size()}</span>
+                	<span class="${ifTrue(map.get(i).confirmed_cost!=billInstance.cost,'highlight','')}">
+                	 ( sum: ${map.get(i).confirmed_cost} ) </span>
+                </td>
             
             	<g:if test="${!SimpleMode}"><td class="${ifTrue(!billInstance.checkOut,'highlight','')}">${ifTrue(billInstance.checkOut,'Yes','No')}</td></g:if>
             	

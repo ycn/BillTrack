@@ -61,12 +61,7 @@ class AccountController extends BaseController {
 	                accountInstance.delete()
 	                flash.message = "Account ${accountInstance.toString()} deleted"
 	                loadStatus()
-	                if (_base.User == accountInstance.bill.payer) {
-	                	redirect(controller:bill,action:edit, id:accountInstance.bill.id)
-	                }
-	                else {
-	                	redirect(controller:bill,action:show, id:accountInstance.bill.id)
-	                }
+	                redirect(action:list)
 	            }
 	            catch(org.springframework.dao.DataIntegrityViolationException e) {
 	                flash.message = "Account ${accountInstance.toString()} could not be deleted"

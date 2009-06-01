@@ -7,7 +7,7 @@ class BillController extends BaseController {
     def index = { redirect(action:list,params:params) }
 
     // the delete, save and update actions only accept POST requests
-    static allowedMethods = [delete:'POST', save:'POST', done:'POST']
+    static allowedMethods = [delete:'POST', save:'POST', done:'POST', checkoutresult:'POST']
 
     def list = {
 		params.max = Math.min( params.max ? params.max.toInteger() : 20,  100)
@@ -29,7 +29,21 @@ class BillController extends BaseController {
 				rowCount()
 			}
 		}
-		_base.putAll([ billInstanceList: result,
+		def map = []
+		def sum = 0.0
+		def num = 0
+		result.each{
+			sum = 0.0
+			num = 0
+			it.accounts.each{
+				if (it.confirmed) num++
+				sum += it.cost
+			}
+			map.push(['confirmed_num':num,
+			         'confirmed_cost':sum])
+		}
+		_base.putAll([ map:map,
+		               billInstanceList: result,
 		               billInstanceTotal: total ])
 		return _base
     }
@@ -143,10 +157,58 @@ class BillController extends BaseController {
     }
 	
 	def checkout = {
-		
+		def c = Bill.createCriteria()
+		def results = c {
+			eq('checkOut', false)
+			order("createdDate", "desc")
+		}
+		def map = []
+		def sum = 0.0
+		def num = 0
+		results.each{
+			sum = 0.0
+			num = 0
+			it.accounts.each{
+				if (it.confirmed) num++
+				sum += it.cost
+			}
+			map.push(['confirmed_num':num,
+			         'confirmed_cost':sum])
+		}
+		_base.putAll([ map:map,
+		               billInstanceList: results,
+					   billInstanceTotal: results.size() ])
+		return _base
 	}
 	
 	def checkoutresult = {
-		
+		def billID
+		def billInstance
+		def paidmap = new HashMap()
+		def consumedmap = new HashMap()
+		params.each{
+			try {
+				billID = it.key.toInteger()
+				billInstance = Bill.get(billID)
+				if (billInstance) {
+					billInstance.checkOut = true;
+					billInstance.checkOutDate = new Date()
+					if(!billInstance.hasErrors() && billInstance.save()) {
+						if (!paidmap.get(billInstance.payer.name, false))
+							paidmap[(billInstance.payer.name)] = 0
+						paidmap[(billInstance.payer.name)] += billInstance.cost
+						billInstance.accounts.each{
+							if (!consumedmap.get(it.consumer.name, false))
+								consumedmap[(it.consumer.name)] = 0
+							consumedmap[(it.consumer.name)] += it.cost
+						}
+		            }
+				}
+			} catch (Exception e) {}
+		}
+		_base.putAll([users:consumedmap.keySet(),
+		              paidmap:paidmap,
+		              consumedmap:consumedmap])
+		return _base
 	}
 }
